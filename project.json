@@ -1,0 +1,27 @@
+
+{
+    "project_type": "javascript",
+
+    "debugMode" : 1,
+    "showFPS" : false,
+    "frameRate" : 60,
+    "noCache" : false,
+    "id" : "gameCanvas",
+    "renderMode" : 0,
+    "engineDir":"frameworks/cocos2d-html5",
+
+    "modules" : ["cocos2d", "extensions", "external"],
+
+    "jsList" : [
+
+        "src/resource.js",
+        "src/global.js",
+        "src/StartScene.js",
+        "src/GameScene.js",
+        "src/GameSceneController.js",
+        "src/GameSceneView.js",
+        "src/GameSceneEliminateModel.js",
+        "src/GameSceneFightModel.js",
+        "src/CircleMove.js"
+    ]
+}
