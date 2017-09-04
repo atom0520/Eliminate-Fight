@@ -3,9 +3,19 @@
     由于场景比较简单,这里仅用了一个游戏场景下绑定一个层的简单结构
  */
 var StartLayer = cc.Layer.extend({
-     ctor:function () {
-         this._super();
+    m_patternSprites:[],
 
+    m_patternSpritesCircleMovement:{
+        center:cc.p(0,0),
+        radius:0,
+        degreePerFrame:0,
+        initDegree:[],
+        currDegree:[],
+    },
+
+    ctor:function () {
+         this._super();
+         //cc.log("StartScene.ctor!");
          var bgSprite = new cc.Sprite(res.startSceneScrollBg_png);
          bgSprite.setAnchorPoint(0.5,0.0);
 
@@ -105,7 +115,8 @@ var StartLayer = cc.Layer.extend({
              patternSprites[i].setAnchorPoint(0.5,0.5);
              patternSprites[i].setOpacity(0);
              patternSprites[i].setScale(1.2);
-             patternSprites[i].runAction(cc.fadeTo(1.0,188));
+             //patternSprites[i].runAction(cc.fadeTo(2.0,188));
+
              this.addChild(patternSprites[i],5);
          }
          patternSprites[0].initWithSpriteFrameName(PATTERN_SWORD_SPRITE_FRAME_NAME);
@@ -115,18 +126,73 @@ var StartLayer = cc.Layer.extend({
          patternSprites[4].initWithSpriteFrameName(PATTERN_SPEED_UP_SPRITE_FRAME_NAME);
          patternSprites[5].initWithSpriteFrameName(PATTERN_FREEZE_SPRITE_FRAME_NAME);
 
+        this.m_patternSpritesCircleMovement.center = cc.p(cc.winSize.width/2-4,cc.winSize.height/2-72);
+        this.m_patternSpritesCircleMovement.radius = 108;
+        this.m_patternSpritesCircleMovement.degreePerFrame = 360/(2.0*60.0);
+
          for(var i=0;i<g_patternTypeNum;i++){
-             var circleMove = new CircleMove();
-             circleMove.initWithDuration(2,1,cc.p(cc.winSize.width/2-4,cc.winSize.height/2-72),108,Math.PI*2/6.0*i);
-             patternSprites[i].runAction(cc.repeatForever(circleMove));
+             this.m_patternSprites[i] = patternSprites[i];
+
+             this.m_patternSpritesCircleMovement.initDegree[i]=360.0/g_patternTypeNum*i;
+             this.m_patternSpritesCircleMovement.currDegree[i]=360.0/g_patternTypeNum*i;
+             //var circleMove = new CircleMove();
+             //circleMove.initWithDuration(2,1,cc.p(cc.winSize.width/2-4,cc.winSize.height/2-72),108,60.0*i);
+             //patternSprites[i].runAction(cc.repeatForever(circleMove));
          }
 
+        this.updatePatternSpritesPosition();
+        // cc.log("this.m_patternSpritesCircleMovement.center.x:"+this.m_patternSpritesCircleMovement.center.x);
+        // cc.log("this.m_patternSpritesCircleMovement.center.y:"+this.m_patternSpritesCircleMovement.center.y);
          return true;
-     },onEnterTransitionDidFinish:function(){
+     },
+
+    onEnterTransitionDidFinish:function(){
         this._super();
-        cc.log("onEnterTransitionDidFinish");
+        //cc.log("StartScene.onEnterTransitionDidFinish!");
+        for(var i=0;i<g_patternTypeNum;i++){
+            this.m_patternSprites[i].setOpacity(0);
+            this.m_patternSprites[i].runAction(cc.fadeTo(2.0,188));
+        }
+
+        //cc.log("onEnterTransitionDidFinish");
         cc.audioEngine.playMusic(res.startSceneBGM_wav,true);
+        //this.scheduleUpdate(1/60.0);
+        this.schedule(this.update,1/60.0);
     },
+
+    update:function(dt){
+        //cc.log("StartLayer.update!");
+        this.updatePatternSpritesPosition();
+    },
+
+    updatePatternSpritesPosition:function(){
+        for(var i=0;i<g_patternTypeNum;i++){
+            this.m_patternSpritesCircleMovement.currDegree[i] += this.m_patternSpritesCircleMovement.degreePerFrame;
+            while(this.m_patternSpritesCircleMovement.currDegree[i]>360){
+                this.m_patternSpritesCircleMovement.currDegree[i] -= 360;
+            }
+
+            var radian = this.m_patternSpritesCircleMovement.currDegree[i]/180.0*Math.PI;
+
+            var offsetX = this.m_patternSpritesCircleMovement.radius*Math.cos(radian);
+            var offsetY = this.m_patternSpritesCircleMovement.radius*Math.sin(radian);
+
+            var newPos = cc.p(
+                this.m_patternSpritesCircleMovement.center.x+offsetX,
+                this.m_patternSpritesCircleMovement.center.y+offsetY);
+
+            // cc.log("newPos.x:"+newPos.x);
+            // cc.log("newPos.y:"+newPos.y);
+
+            this.m_patternSprites[i].setPosition(newPos);
+        }
+    },
+
+    onExitTransitionDidStart:function(){
+        this._super();
+        //cc.log("onExitTransitionDidStart");
+        this.unschedule(this.update);
+    }
 });
 
 var StartScene = cc.Scene.extend({

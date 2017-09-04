@@ -30,28 +30,29 @@ var GameSceneController = cc.Layer.extend({
 
         this.addChild(this.m_view,2);
 
-        this.m_view.m_testLabel1 = new cc.LabelTTF("","",20);
-        this.m_view.m_testLabel1.setAnchorPoint(0,1);
-        this.m_view.m_testLabel1.setPosition(0,cc.winSize.height);
-        this.m_view.addChild(this.m_view.m_testLabel1,3);
+        if(SHOW_TEST_LABEL) {
+            this.m_view.m_testLabel1 = new cc.LabelTTF("", "", 20);
+            this.m_view.m_testLabel1.setAnchorPoint(0, 1);
+            this.m_view.m_testLabel1.setPosition(0, cc.winSize.height);
+            this.m_view.addChild(this.m_view.m_testLabel1, 3);
 
-        this.m_view.m_testLabel2 = new cc.LabelTTF("","",20);
-        this.m_view.m_testLabel2.setAnchorPoint(0,1);
-        this.m_view.m_testLabel2.setPosition(0,cc.winSize.height-32);
-        this.m_view.addChild(this.m_view.m_testLabel2,3);
+            this.m_view.m_testLabel2 = new cc.LabelTTF("", "", 20);
+            this.m_view.m_testLabel2.setAnchorPoint(0, 1);
+            this.m_view.m_testLabel2.setPosition(0, cc.winSize.height - 32);
+            this.m_view.addChild(this.m_view.m_testLabel2, 3);
 
-        this.m_view.m_testLabel3 = new cc.LabelTTF("","",20);
-        this.m_view.m_testLabel3.setAnchorPoint(0,1);
-        this.m_view.m_testLabel3.setPosition(0,cc.winSize.height-64);
-        this.m_view.addChild(this.m_view.m_testLabel3,3);
-
+            this.m_view.m_testLabel3 = new cc.LabelTTF("", "", 20);
+            this.m_view.m_testLabel3.setAnchorPoint(0, 1);
+            this.m_view.m_testLabel3.setPosition(0, cc.winSize.height - 64);
+            this.m_view.addChild(this.m_view.m_testLabel3, 3);
+        }
 
         return true;
     },
     //在即将进入场景前添加两个model各种事件的监听器,并播放背景音乐
     onEnterTransitionDidFinish:function(){
         this._super();
-        cc.log("onEnterTransitionDidFinish");
+        //cc.log("onEnterTransitionDidFinish");
         cc.audioEngine.playMusic(res.gameSceneBGM_wav,true);
 
         //添加触摸时间监听器
@@ -167,7 +168,6 @@ var GameSceneController = cc.Layer.extend({
             callback:this.fightGameOverCallBack.bind(this)
         },this);
 
-
         this.m_gameState = GameState.init;
 
         this.scheduleUpdate();
@@ -196,9 +196,12 @@ var GameSceneController = cc.Layer.extend({
                 this.m_fightModel.update(dt);
                 this.m_view.update(dt);
 
-                this.m_view.m_testLabel1.setString("fighter 0 state is: "+this.m_fightModel.m_fightersVars[0].state);
-                this.m_view.m_testLabel2.setString("fighter 0 outOfPlace is: "+this.m_fightModel.m_fightersVars[0].outOfPlace);
-                this.m_view.m_testLabel3.setString("fighter 0 frozen is: "+this.m_fightModel.m_fightersVars[0].debuffState.frozen);
+                if(SHOW_TEST_LABEL) {
+                    //this.m_view.m_testLabel1.setString("fighter 0 state is: " + this.m_fightModel.m_fightersVars[0].state);
+                    this.m_view.m_testLabel1.setString("this.m_eliminateModel.m_eliminateGameState: " + this.m_eliminateModel.m_eliminateGameState);
+                    //this.m_view.m_testLabel2.setString("fighter 0 outOfPlace is: " + this.m_fightModel.m_fightersVars[0].outOfPlace);
+                    //this.m_view.m_testLabel3.setString("fighter 0 frozen is: " + this.m_fightModel.m_fightersVars[0].debuffState.frozen);
+                }
                 break;
             //游戏结束
             case GameState.end:
@@ -209,16 +212,18 @@ var GameSceneController = cc.Layer.extend({
     },
     //玩家开始触摸事件的回调函数
     onTouchBegan:function(touch,event){
-        cc.log("onTouchBegan1");
+        cc.log("onTouchBegan");
         if(this.m_gameState != GameState.inTheGame){
             return false;
         }
         if(this.m_fightModel.m_fightersVars[0].debuffState.frozen == true){
+            cc.log("this.m_fightModel.m_fightersVars[0].debuffState.frozen == true");
             cc.audioEngine.playEffect(res.disable_wav);
             return false;
         }
         
         if(this.m_eliminateModel.m_eliminateGameState != EliminateGameState.waitForInput){
+            cc.log("this.m_eliminateModel.m_eliminateGameState != EliminateGameState.waitForInput");
             return false;
         }
 
@@ -227,8 +232,10 @@ var GameSceneController = cc.Layer.extend({
 
         //判断是否按中某个三消图案
         if(patternIndex != null){
+            cc.log("touchedPatternIndex is not null");
             this.m_eliminateModel.selectPattern(patternIndex);
         }else{
+            cc.log("touchedPatternIndex is null");
             this.m_eliminateModel.m_firstSelectedPatternIndex = null;
             this.m_view.m_selectCursor.setPosition(SELECT_CURSOR_SPRITE_HIDE_POSITION);
         }
@@ -290,7 +297,7 @@ var GameSceneController = cc.Layer.extend({
     },
     //EliminateModel初始化三消图案时的回调函数
     initPatternsCallBack:function(event){
-        cc.log("initPatternsCallBack");
+        //cc.log("initPatternsCallBack");
         var eventData = event.getUserData();
         var patternsVars = eventData.patternsVars;
         var gameSpeed = eventData.gameSpeed;
@@ -469,7 +476,7 @@ var GameSceneController = cc.Layer.extend({
             eliminateType = eliminableTypes[0];
         }
 
-        cc.log("eliminate num is: "+eliminablePatternsNum[eliminateType]);
+        //cc.log("eliminate num is: "+eliminablePatternsNum[eliminateType]);
         if(this.m_fightModel.m_fightersVars[0].state == FighterState.alert
         && this.m_fightModel.m_fightersVars[0].debuffState.frozen == false) {
             switch(eliminateType){
@@ -676,7 +683,6 @@ var GameSceneController = cc.Layer.extend({
                 swordAttackAnimation.setDelayPerUnit(g_swordAttackDuration/swordAttackAnimation.getFrames().length
                     / fighterSpeed);
 
-
                 var swordAttackAction = cc.sequence(
                     cc.fadeOut(g_fighterFadeOutDuration / fighterSpeed),
                     cc.callFunc(
@@ -688,7 +694,7 @@ var GameSceneController = cc.Layer.extend({
                     cc.animate(swordAttackAnimation),
                     cc.callFunc(
                         function(){
-                            cc.log("from sword attack restore to repeat alert");
+                            //cc.log("from sword attack restore to repeat alert");
                             this.stopActionByTag(REPEAT_ANIMATE_ALERT_FIGHTER_SPRITE_ACTION_TAG);
                             
                             var repeatAnimateAlertAction = cc.repeatForever(cc.animate(cc.animationCache.getAnimation(FIGHTER_1_ALERT_ANIMATION_NAME)));
@@ -814,7 +820,7 @@ var GameSceneController = cc.Layer.extend({
     },
     //model逻辑处理战斗者增加防御buff时调用的回调函数
     fighterGetDefendCallBack:function(event){
-        cc.log("playerDefendCallBack");
+        //cc.log("playerDefendCallBack");
         var eventData = event.getUserData();
         var fighterId = eventData.fighterId;
         var fighterSpeed = eventData.fighterSpeed;
@@ -841,7 +847,7 @@ var GameSceneController = cc.Layer.extend({
             cc.delayTime(g_fighterGetDefendDuration/fighterSpeed),
             cc.callFunc(
                 function(){
-                    cc.log("getDefendActionDidFinish!");
+                    //cc.log("getDefendActionDidFinish!");
                     //this.stopAllActions();
                     // this.stopActionByTag(REPEAT_ANIMATE_ALERT_FIGHTER_SPRITE_ACTION_TAG);
                     // this.stopActionByTag(REPEAT_ANIMATE_ALERT_FIGHTER_SPRITE_ACTION_TAG);
@@ -924,10 +930,9 @@ var GameSceneController = cc.Layer.extend({
         //     cc.animate(cc.animationCache.getAnimation(FIGHTER_1_HURT_ANIMATION_NAME))
         // );
 
-
         //var oldPosition = this.m_view.m_fighterSprites[fighterId].getPosition();
         if(isFighterFrozen == false){
-            cc.log("hurt action!");
+            //cc.log("hurt action!");
             //this.resetFighterSprite(fighterId);
             //this.m_view.m_fighterSprites[fighterId].stopAllActions();
             this.m_view.m_fighterSprites[fighterId].stopActionByTag(SWORD_ATTACK_FIGHTER_SPRITE_ACTION_TAG);
@@ -965,7 +970,7 @@ var GameSceneController = cc.Layer.extend({
                 cc.callFunc(
                     function(){
                         //this.stopAllActions();
-                        cc.log("stop repeat alert hurt action");
+                        //cc.log("stop repeat alert hurt action");
                         //this.stopActionByTag(REPEAT_ANIMATE_HURT_FIGHTER_SPRITE_ACTION_TAG);
                         //this.stopActionByTag(REPEAT_ANIMATE_HURT_FIGHTER_SPRITE_ACTION_TAG);
                         //this.stopActionByTag(REPEAT_ANIMATE_HURT_FIGHTER_SPRITE_ACTION_TAG);
@@ -989,8 +994,8 @@ var GameSceneController = cc.Layer.extend({
 
         var valueSprite = getValueSprite(ValueSpriteType.hurt,hurtValue);
         var digitSprites = valueSprite.getChildren();
-        cc.log("digitSprites length is "+digitSprites.length);
-        //
+        //cc.log("digitSprites length is "+digitSprites.length);
+
         valueSprite.setPosition(
             cc.p(this.m_view.m_fighterSprites[fighterId].getPositionX()+(digitSprites.length-1)*VALUE_SPRITE_DIGIT_NUM_SPACING/2.0
                 +VALUE_SPRITE_INIT_OFFSET_X_TO_FIGHTER,
@@ -1323,7 +1328,7 @@ var GameSceneController = cc.Layer.extend({
                 function(){
                     //this.stopAllActions();
 
-                    cc.log("retore from frozen!");
+                    //cc.log("retore from frozen!");
                     this.setAnchorPoint(0.5, 0.0);
                     this.setOpacity(255);
 
@@ -1434,7 +1439,7 @@ var GameSceneController = cc.Layer.extend({
 
         if(i==oldBuffAndDebuffNum){
             //添加新buff
-            cc.log("add new buff sprite");
+            //cc.log("add new buff sprite");
             var newBuffSprite =  new cc.Sprite();
             var newBuffSpriteFrameName;
             switch(buffOrDebuffNodeName){
@@ -1566,7 +1571,7 @@ var GameSceneController = cc.Layer.extend({
     //     this.m_view.m_fighterSprites[fighterId].setOpacity(255.0);
     // },
     fightGameOverCallBack:function(event) {
-        cc.log("game scene game over!");
+        //cc.log("game scene game over!");
         cc.audioEngine.stopMusic();
         this.m_gameState = GameState.gameOver;
         var eventData = event.getUserData();

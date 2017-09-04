@@ -239,7 +239,7 @@ var GameSceneEliminateModel = cc.Node.extend({
         }
     },
     swapPatterns:function(firstPatternIndex,secondPatternIndex){
-        //cc.log("swapPatterns");
+        cc.log("swapPatterns");
         var gameSpeed = this.m_gameSpeed;
         var firstPatternVars = this.m_patternsVars[firstPatternIndex.row][firstPatternIndex.col];
         this.m_patternsVars[firstPatternIndex.row][firstPatternIndex.col] = this.m_patternsVars[secondPatternIndex.row][secondPatternIndex.col];
@@ -253,10 +253,15 @@ var GameSceneEliminateModel = cc.Node.extend({
         event.setUserData(eventData);
         cc.eventManager.dispatchEvent(event);
 
-        this.runAction(cc.sequence(cc.delayTime(g_patternSwapDuration/gameSpeed),
-            cc.callFunc(this.swapPatternsDidFinish.bind(this),this,{firstPatternIndex:firstPatternIndex,secondPatternIndex:secondPatternIndex})));
+        // this.runAction(cc.sequence(cc.delayTime(g_patternSwapDuration/gameSpeed),
+        //     cc.callFunc(this.swapPatternsDidFinish.bind(this),this,{firstPatternIndex:firstPatternIndex,secondPatternIndex:secondPatternIndex})));
+
+        this.scheduleOnce(function temp(){
+            this.swapPatternsDidFinish(this,{firstPatternIndex:firstPatternIndex,secondPatternIndex:secondPatternIndex});
+        },g_patternSwapDuration/gameSpeed)
     },
     swapPatternsDidFinish:function(pNode,data){
+        cc.log("swapPatternsDidFinish");
         if(this.m_eliminateGameState == EliminateGameState.swapPatternsForth){
 
             var firstPatternIndex = data.firstPatternIndex;

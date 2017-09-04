@@ -5,6 +5,9 @@
 
 //notification model类传给controller事件的标志
 //from eliminate model
+var WIN_WIDTH = 480;
+var WIN_HEIGHT = 720;
+var SHOW_TEST_LABEL =  false;
 var NOTIFICATION_INIT_PATTERNS = "initPatterns";
 var NOTIFICATION_REMOVE_ALL_PATTERNS = "removeAllPatterns";
 var NOTIFICATION_SELECT_PATTERN = "selectPattern";
@@ -76,14 +79,14 @@ var ELIMINATE_PATTERN_EFFECT_ANIMATION_NAME = "eliminate_pattern_effect";
 
 //var value
 var PATTERN_MATRIX_TOP_OFFSET_Y_TO_FIGHTERS = 64;
-var PATTERN_SPRITE_DROP_HEIGHT = cc.winSize.height/4;
+var PATTERN_SPRITE_DROP_HEIGHT = WIN_HEIGHT/4;
 var SELECT_CURSOR_SPRITE_HIDE_POSITION = cc.p(-100,-100);
 
 
-var PLAYER_FIGHTER_SPRITE_INIT_POSITION_X = cc.winSize.width/4;
-var PLAYER_FIGHTER_SPRITE_INIT_POSITION_Y = cc.winSize.height*3/5;
+var PLAYER_FIGHTER_SPRITE_INIT_POSITION_X = WIN_WIDTH/4;;
+var PLAYER_FIGHTER_SPRITE_INIT_POSITION_Y = WIN_HEIGHT*3/5;
 
-var COMPUTER_FIGHTER_SPRITE_INIT_POSITION_X = cc.winSize.width*3/4;
+var COMPUTER_FIGHTER_SPRITE_INIT_POSITION_X = WIN_WIDTH*3/4;
 var COMPUTER_FIGHTER_SPRITE_INIT_POSITION_Y = PLAYER_FIGHTER_SPRITE_INIT_POSITION_Y;
 
 var FIGHTER_SWORD_ATTACK_DISTANCE = 64;
@@ -273,7 +276,7 @@ var g_healValuePerDegree = 5;
 
 
 //duration
-var g_patternDropSpeed = (cc.winSize.height/0.4);
+var g_patternDropSpeed = (WIN_HEIGHT/0.4);
 var g_patternSwapDuration = 0.4;
 var g_patternEliminateDuration = 0.4;
 

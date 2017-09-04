@@ -557,7 +557,7 @@ var GameSceneFightModel = cc.Node.extend({
         var fighterSpeed = this.m_fightersVars[fighterId].speed;
         var delayDuration = getRandBetween(g_fighterAIAverageDelay-g_fighterAIDelayVar,g_fighterAIAverageDelay+g_fighterAIDelayVar)
             /fighterSpeed;
-        cc.log("fighterAI, next delayDuration:"+delayDuration );
+        //cc.log("fighterAI, next delayDuration:"+delayDuration );
 
         this.m_fightersVars[fighterId].aiDelay = true;
         this.stopActionByTag(AI_DELAY_MODEL_ACTION_TAG);
@@ -630,7 +630,7 @@ var GameSceneFightModel = cc.Node.extend({
     },
     fightGameOver:function(isWin){
         this.m_fightGameState = FightGameState.gameOver;
-        cc.log("fight  game over!");
+        //cc.log("fight  game over!");
 
         var event = new cc.EventCustom(NOTIFICATION_FIGHT_GAME_OVER);
         event.setUserData({isWin:isWin});
